@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+  zaps     Zap[]
+}
+
+model Zap {
+  id        String   @id @default(uuid())
+  userId    String
+  User      User     @relation(fields: [userId], references: [id])
+  triggerId String
+  trigger   Trigger?
+  actions   Action[]
+  ZapRuns   ZapRun[]
+}
+
+model Trigger {
+  id                String            @id @default(uuid())
+  zapId             String            @unique
+  zap               Zap               @relation(fields: [zapId], references: [id])
+  type              String
+  availableTriggers AvailableTriggers @relation(fields: [type], references: [id])
+}
+
+model AvailableTriggers {
+  id       String    @id @default(uuid())
+  name     String
+  triggers Trigger[]
+}
+
+model Action {
+  id           String           @id @default(uuid())
+  typeId       String
+  type         AvailableActions @relation(fields: [typeId], references: [id])
+  zapId        String
+  zap          Zap              @relation(fields: [zapId], references: [id])
+  sortingOrder Int              @default(0)
+}
+
+model AvailableActions {
+  id      String   @id @default(uuid())
+  name    String
+  actions Action[]
+}
+
+model ZapRun {
+  id           String        @id @default(uuid())
+  zapId        String
+  metadata     Json
+  zap          Zap           @relation(fields: [zapId], references: [id])
+  zapRunOutBox ZapRunOutBox?
+}
+
+model ZapRunOutBox {
+  id       String @id @default(uuid())
+  zapRunId String @unique
+  zapRun   ZapRun @relation(fields: [zapRunId], references: [id])
+}
