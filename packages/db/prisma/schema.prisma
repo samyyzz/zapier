@@ -33,11 +33,11 @@ model Zap {
 }
 
 model Trigger {
-  id                String            @id @default(uuid())
-  zapId             String            @unique
-  zap               Zap               @relation(fields: [zapId], references: [id])
-  type              String
-  availableTriggers AvailableTriggers @relation(fields: [type], references: [id])
+  id     String            @id @default(uuid())
+  zapId  String            @unique
+  zap    Zap               @relation(fields: [zapId], references: [id])
+  typeId String
+  type   AvailableTriggers @relation(fields: [typeId], references: [id])
 }
 
 model AvailableTriggers {

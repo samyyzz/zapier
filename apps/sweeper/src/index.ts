@@ -1,18 +1,18 @@
 import { Kafka } from "kafkajs";
+import {prisma} from "@zap/db/prisma"
 
 const kafka = new Kafka({
-  clientId: "outbox-pattern-sweeeper",
+  clientId: "outbox-pattern-producer",
   brokers: ["localhost:9092"],
 });
 const TOPIC_NAME = "zap-events";
-const prismaClient = new PrismaClient();
 
 async function main() {
   const producer = kafka.producer();
   await producer.connect();
 
   while (true) {
-    const RowsToSweep = await prismaClient.zapRunOubox.findMany({
+    const RowsToSweep = await prisma.zapRunOutBox.findMany({
       where: {},
       take: 10,
     });

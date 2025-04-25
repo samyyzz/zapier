@@ -1,8 +1,7 @@
 import express from "express";
+import {prisma} from "@zap/db/prisma"
 
 const app = express();
-const prismaClient = new PrismaClient();
-
 app.use(express.json());
 
 app.post("/hooks/catch/:userId/:zapId", async (req, res) => {
@@ -10,16 +9,16 @@ app.post("/hooks/catch/:userId/:zapId", async (req, res) => {
   const body = req.body;
 
   // store data in db using transactional outbox pattern
-  await prismaClient.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx) => {
     const zapRun = await tx.zapRun.create({
       data: {
         zapId: zapId,
         metadata: body,
       },
     });
-    await tx.zapRunOubox.create({
+    await tx.zapRunOutBox.create({
       data: {
-        zapId: zapRun.id,
+        zapRunId: zapRun.id,
       },
     });
   });

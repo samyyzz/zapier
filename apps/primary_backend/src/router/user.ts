@@ -22,20 +22,29 @@ router.post("/signup", async (req, res) => {
       message: "User already exist, try another email",
     });
   }
-  const newUser = await prisma.user.create({
-    data: {
-      name: parsedBody.data.name,
-      email: parsedBody.data.email,
-      password: parsedBody.data.password,
-    },
-  });
-  const token = jwt.sign({ id: newUser.id }, JWT_SECRET);
+  try{
+    if(parsedBody.data){
+      const newUser = await prisma.user.create({
+        data: {
+          name: parsedBody.data.name,
+          email: parsedBody.data.email,
+          password: parsedBody.data.password,
+        },
+      });
+      const token = jwt.sign({ id: newUser.id }, JWT_SECRET);
+      res.json({
+        message: "User account created successfully.",
+        verification: "Check your email and verify now !",
+        token,
+      });
+    }else{
+      res.status(400).json({message: "No data received from user !"})
+    }
+  }catch(error){
+    res.status(411).json({message:"Failed to signup",error})
+  }
 
-  res.json({
-    message: "User account created successfully.",
-    verification: "Check your email and verify now !",
-    token,
-  });
+
 });
 
 //POST signin
@@ -46,22 +55,30 @@ router.post("/signin", authMiddleware, async (req, res) => {
       message: "Failed to validate !",
     });
   }
-  const myUser = await prisma.user.findFirst({
-    where: {
-      email: parsedBody.data?.email,
-      password: parsedBody.data?.password,
-    },
-  });
-  if (!myUser) {
-    res.status(411).json({
-      message: "No user Found with this credentials",
-    });
-  }
-  const token = jwt.sign({ id: myUser.id }, JWT_SECRET);
+  try {
+    if(parsedBody.data){
+      const myUser = await prisma.user.findFirst({
+        where: {
+          email: parsedBody.data.email,
+          password: parsedBody.data.password,
+        },
+      });
+      if (!myUser) {
+        res.status(411).json({
+          message: "No user Found with this credentials",
+        });
+      }
+      const token = jwt.sign({ id: myUser!.id }, JWT_SECRET);
+      res.json({
+        token,
+      });
 
-  res.json({
-    token,
-  });
+    }else{
+      res.status(400).json({message: "No data received from user !"})
+    }
+  }catch(error){
+    res.status(411).json({message:"Failed to signup",error})
+  }
 });
 
 //GET userProfile
@@ -83,7 +100,6 @@ router.get("/user", async (req, res) => {
         message:"Failed to get user data !"
     })
   }
-
 });
 
 export const userRouter = router;

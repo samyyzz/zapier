@@ -13,38 +13,54 @@ router.post("/", authMiddleware, async (req, res) => {
       message: "Failed to validate",
     });
   }
-  const zapId = await prisma.$transaction(async (tx) => {
-    const zap = await tx.zap.create({
-      data: {
-        triggerId: "",
-        actions: {
-          create: parsedBody.data?.actions.map((x, index) => ({
-            actionId: x.availableActionId,
-            sortingOrder: index,
-          })),
+  try {
+    if(parsedBody.data){
+      res.json({message:"ada"})
+    const zapId = await prisma.$transaction(async (tx) => {
+      const zap = await tx.zap.create({
+        data: {
+          userId: req.userId,
+          triggerId: "",
+          actions: {
+            create: parsedBody.data?.actions.map((x, index) => ({
+              typeId: x.availableActionId,
+              sortingOrder: index,
+            })),
+          },
         },
-      },
+      });
+      const trigger = await tx.trigger.create({
+        data: {
+          // userId: req.userId,
+          typeId: parsedBody.data?.availabletriggerId,
+          zapId: zap.id,
+        },
+      });
+      await tx.zap.update({
+        where: {
+          id: zap.id,
+        },
+        data: {
+          triggerId: trigger.id,
+        },
+      });
+      return zap.id;
     });
-    const trigger = await tx.trigger.create({
-      data: {
-        userId: req.userId,
-        triggeredId: parsedBody.data?.availabletriggerId,
-        zapId: zap.id,
-      },
+    res.json({
+      zapId,
     });
-    await tx.zap.update({
-      where: {
-        id: zap.id,
-      },
-      data: {
-        triggerId: trigger.id,
-      },
+  }else{
+    res.status(411).json({
+      message: "Sorry ! You are not authorized ",
     });
-    return zap.id;
-  });
-  res.json({
-    zapId,
-  });
+  }
+
+  } catch (error) {
+    res.status(411).json({
+      message: "Sorry ! Failed to create zap.",
+    });
+  }
+
 });
 
 //GET all-zaps
@@ -87,7 +103,7 @@ router.get("/:zapId", authMiddleware, async (req, res) => {
     const zap = await prisma.zap.findFirst({
       where: {
         userId,
-        zapId,
+        id :zapId,
       },
       include: {
         actions: {

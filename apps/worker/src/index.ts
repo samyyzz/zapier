@@ -1,9 +1,10 @@
 import { Kafka } from "kafkajs";
 
 const kafka = new Kafka({
-  clientId: "outbox-pattern-worker",
+  clientId: "outbox-pattern-consumer",
   brokers: ["localhost:9092"],
 });
+
 const TOPIC_NAME = "zap-events";
 
 async function main() {
@@ -21,7 +22,7 @@ async function main() {
           topic,
           partition,
           offset: message.offset,
-          value: message.value.toString(),
+          value: message.value!.toString(),
         });
         consumer.commitOffsets([
           {
