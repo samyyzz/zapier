@@ -1,0 +1,1 @@
+export const PRIMARY_BACKEDN_URL = process.env.PRIMARY_BACKEDN_URL || "http://localhost:3000"
