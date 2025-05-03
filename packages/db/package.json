@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "exports":{
-    "./*": "./index.ts"
+    "./*": "./dist/index.js"
   },
   "scripts": {
-    "build": "tsc -b"
+    "build": "tsc -b",
+    "db:migrate": "npx prisma migrate dev",
+    "db:generate":"npx prisma generate"
   },
   
   "keywords": [],
