@@ -1,16 +1,20 @@
 "use client";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { MouseEventHandler } from "react";
 
 export interface CustomButton {
   name: string;
   path?: string;
   className?: string;
   icon?: string;
-  onClick: MouseEventHandler<HTMLDivElement>
+  onClick: () => void;
 }
-export const BoxBtn = ({ name, path, className, icon, onClick }: CustomButton) => {
+export const BoxBtn = ({
+  name,
+  path,
+  className,
+  icon,
+  onClick,
+}: CustomButton) => {
   return (
     <div
       onClick={onClick}

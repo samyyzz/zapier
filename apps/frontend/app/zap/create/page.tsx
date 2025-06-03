@@ -14,6 +14,7 @@ export interface UserSelectedAction {
   name: string;
   actionId: string;
   index: number;
+  metadata: any;
 }
 
 export interface UserSelectedTrigger {
@@ -58,6 +59,7 @@ const page = () => {
           name: props.name,
           actionId: props.id,
           index: selectedModalIndex,
+          metadata: props.metadata,
         };
         return newActions;
       });
@@ -75,7 +77,7 @@ const page = () => {
         metadata: {},
         actions: selectedActions.map((action) => ({
           actionID: action.actionId,
-          metadata: {},
+          metadata: action.metadata,
         })),
       },
       {
@@ -116,6 +118,7 @@ const page = () => {
               name: "",
               actionId: "",
               index: a.length + 2,
+              metadata: {},
             },
           ]);
         }}
