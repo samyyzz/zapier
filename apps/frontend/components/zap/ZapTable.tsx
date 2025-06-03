@@ -1,5 +1,6 @@
 import React from "react";
 import { PrimaryBtn } from "../buttons/PrimaryBtn";
+import { WEBHOOK_URL } from "@/config";
 
 export interface Zap {
   id: string;
@@ -35,7 +36,7 @@ export const ZapTable = ({ zaps }: { zaps: Zap[] }) => {
         <div className="flex-2 font-bold text-start">zapId</div>
         <div className="flex-1 font-bold text-start">Apps</div>
         <div className="flex-1 font-bold text-start">Last modified</div>
-        <div className="flex-1 font-bold text-start">Status</div>
+        <div className="flex-1 font-bold text-start">Webhook URL</div>
         <div className="flex-1 font-bold text-start">Check</div>
       </div>
       <div className="flex-1">
@@ -47,7 +48,8 @@ export const ZapTable = ({ zaps }: { zaps: Zap[] }) => {
                 {zap.trigger.type.name}
                 {zap.actions.map((action) => action.type.name + " ")}
               </div>
-              <div className="flex-1 text-start">Date</div>
+              <div className="flex-1 text-start">Todo:Date</div>
+              <div className="flex-1 text-start">{WEBHOOK_URL}/hooks/catch/{zap.userId}/{zap.id}</div>
               <div className="flex-1 text-start">
                 <PrimaryBtn name="Go" path={`zap/${zap.id}`} />
               </div>

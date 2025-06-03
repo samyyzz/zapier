@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import React from "react";
-import ZapSearch from "../dashboard/ZapSearch";
 
 export interface ZapCellModal {
   index: number | null;
@@ -30,7 +29,7 @@ const Modal = ({ index, onSelect, availableItems }: ZapCellModal) => {
           onClick={() => {
             onSelect(null);
           }}
-          className=" flex justify-between pb-2"
+          className="flex justify-between pb-2"
         >
           <div className="text-md md:text-lg font-bold">
             Select {index == 1 ? "Trigger" : "Action"}
@@ -46,22 +45,21 @@ const Modal = ({ index, onSelect, availableItems }: ZapCellModal) => {
             />
           </div>
         </div>
-          <div className="mb-5 w-3/4">
-            <input placeholder="Search your actions/trigger" className="p-1 pl-3 border border-gray-300 rounded-md w-full outline-none text-gray-600" />
-          </div>
+        <div className="mb-5 w-3/4">
+          <input
+            placeholder="Search your actions/trigger"
+            className="p-1 pl-3 border border-gray-300 rounded-md w-full outline-none text-gray-600"
+          />
+        </div>
         <div className="m-4 flex flex-col gap-2">
           {availableItems?.length &&
             availableItems.map(({ id, name, icon }) => (
               <div
-                onClick={()=> onSelect({id, name})}
+                onClick={() => onSelect({ id, name })}
                 key={name}
-                className="flex gap-2 text-sm bg-amber-50 rounded-md shadow-sm font-semibold font-mono w-1/3 hover:bg-blue-100 p-2">
-                <Image
-                  src={icon}
-                  alt="icon"
-                  width={20}
-                  height={20}
-                />
+                className="flex gap-2 text-sm bg-amber-50 rounded-md shadow-sm font-semibold font-mono w-1/3 hover:bg-blue-100 p-2"
+              >
+                <Image src={icon} alt="icon" width={20} height={20} />
                 {name}
               </div>
             ))}
