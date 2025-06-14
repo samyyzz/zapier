@@ -2,21 +2,26 @@
   "name": "@zap/db",
   "version": "1.0.0",
   "private": true,
-  "exports":{
+  "exports": {
     "./*": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc -b",
     "db:migrate": "npx prisma migrate dev",
-    "db:generate":"npx prisma generate"
+    "db:generate": "npx prisma generate",
+    "db:seed": "npx prisma db seed"
   },
-  
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/node": "^24.0.1",
     "prisma": "^6.6.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
   "dependencies": {
