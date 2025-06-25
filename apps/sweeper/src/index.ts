@@ -1,5 +1,5 @@
 import { Kafka } from "kafkajs";
-import {prisma} from "@zap/db/prisma"
+import { prisma } from "@zap/db/prisma";
 
 const kafka = new Kafka({
   clientId: "outbox-pattern-producer",
@@ -20,7 +20,7 @@ async function main() {
       topic: TOPIC_NAME,
       messages: RowsToSweep.map((row) => {
         return {
-          value: row.zapRunId,
+          value: JSON.stringify({ zapRunId: row.zapRunId, stage: 0 }),
         };
       }),
     });

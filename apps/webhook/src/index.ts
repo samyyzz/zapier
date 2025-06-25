@@ -1,5 +1,6 @@
 import express from "express";
-import {prisma} from "@zap/db/prisma"
+import { prisma } from "@zap/db/prisma";
+import { WEBHOOK_URL } from "./config";
 
 const app = express();
 app.use(express.json());
@@ -23,4 +24,8 @@ app.post("/hooks/catch/:userId/:zapId", async (req, res) => {
     });
   });
   res.json({ message: "Webhook created a transactional outbox pattern data" });
+});
+
+app.listen(() => {
+  console.log(`Webhook Server running on : ${WEBHOOK_URL}`);
 });
