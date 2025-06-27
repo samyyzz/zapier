@@ -1,5 +1,8 @@
 import { Kafka } from "kafkajs";
-import { prisma } from "@zap/db/prisma";
+import { Prisma, prisma } from "@zap/db/prisma";
+import { parse } from "./parser";
+import { sendEmail } from "./email";
+import { sendSol } from "./solana";
 
 const kafka = new Kafka({
   clientId: "outbox-pattern-consumer",
@@ -54,18 +57,37 @@ async function main() {
           (act) => act.sortingOrder === stage
         );
 
+        const zapRunMetadata = zapRunDetails?.metadata;
         if (!currentAction) {
           console.log("Current action not found !");
           return;
         }
-        if (currentAction.type.id === "act01-sol") {
-          console.log("Sending out solana (SOL)");
-          // send solana logic
+        if (currentAction.type.id === "act01") {
+          const amount = parse(
+            (currentAction.metadata as Prisma.JsonObject)?.amount as string,
+            zapRunMetadata
+          );
+          const address = parse(
+            (currentAction.metadata as Prisma.JsonObject)?.address as string,
+            zapRunMetadata
+          );
+          console.log(`Sending: SOL of ${amount} to address ${address}`);
+          await sendSol(address, amount);
         }
-        
-        if (currentAction.type.id === "act01-email") {
+
+        if (currentAction.type.id === "act02") {
           console.log("Sending out an email");
           // send email logic
+          const body = parse(
+            (currentAction.metadata as Prisma.JsonObject)?.body as string,
+            zapRunMetadata
+          );
+          const to = parse(
+            (currentAction.metadata as Prisma.JsonObject)?.email as string,
+            zapRunMetadata
+          );
+          console.log(`Sending: email to - ${to} , body - ${body}`);
+          await sendEmail(to, "", "", body);
         }
 
         await new Promise((r) => setTimeout(r, 500));
